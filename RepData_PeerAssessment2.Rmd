@@ -17,7 +17,7 @@ This analysis investigates the impact of severe weather events on the United Sta
 ## Data Processing
 In the first step of the analysis, check whether the input data file activity.csv is in the working directory, and then download and unzip the file if necessary:
 
-``` {r, echo=TRUE}
+``` {r, echo=TRUE, cache=TRUE}
 if(!file.exists("storm.csv.bz2")){
   url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
   download.file(url, destfile='storm.csv.bz2', method="wininet", mode="wb")
@@ -25,20 +25,20 @@ if(!file.exists("storm.csv.bz2")){
 ```
 
 Then we can read in the data:  
-```{r echo=TRUE}
+```{r echo=TRUE, cache=TRUE}
 df <- read.csv("storm.csv.bz2", 
                na.strings = "NA", header = TRUE)
 dim(df)
 names(df)
 ```                
 
-There are a total of 902297 observations of 37 variables in this dataset.  
+There are a total of 902,297 observations of 37 variables in this dataset.  
 
 ### Wrangling the Data
 In order to work more efficiently, we will subset the data to only include those years and variables which we are most interested in.  
 The data include events from 1950 to 2011, but in the earlier years, there are generally fewer events recorded due to a lack of good records, as shown in the histogram of Total Storm Events by Year:
 
-```{r echo=TRUE}
+```{r echo=TRUE, cache=TRUE}
 df$Year <- as.numeric(format(as.Date(df$BGN_DATE, format = "%m/%d/%Y %H:%M:%S"), "%Y"))
 hist(df$Year, main="Total Storm Events by Year", xlab="Year")
 ```
@@ -54,13 +54,13 @@ In examining our questions, the variables which we will be using in this dataset
 |FATALITIES | The number of fatalities caused by the weather event <br> Numeric variable, Range: 0-583; No missing values|
 |INJURIES | The number of injuries caused by the weather event <br> Numeric variable, Range: 0-1568; No missing values|
 |PROPDMG | The estimated property damage caused by the weather event in Dollars <br> Numeric variable, No missing values|
-|PROPDMGEXP | The order of magnitude of property damage <br> Factor variable, No missing values|
+|PROPDMGEXP | The order of magnitude of property damage <br> Factor variable|
 |CROPDMG | The estimated crop damage caused by the weather event in Dollars <br> Numeric variable, No missing values|
-|CROPDMGEXP | The order of magnitude of crop damage <br> Factor variable <br> No missing values|
+|CROPDMGEXP | The order of magnitude of crop damage <br> Factor variable|
 
 Thus, the new subsetted dataframe can be defined:
 
-```{r echo=TRUE}
+```{r echo=TRUE, cache=TRUE}
 stormdata <- df[df$Year %in% c(1990:2011), ]
 variables <- c("EVTYPE", "FATALITIES", "INJURIES", "PROPDMG", "PROPDMGEXP", 
                 "CROPDMG", "CROPDMGEXP")
@@ -71,7 +71,7 @@ so that we are now working with 751,740 observations of 7 variables.
 
 The final step in preparing the data will be to clean up some of the text variables. As visible when using `summary()` on the EVTYPE factor variable, many of the names have been entered with character variations such as lowercase and plural usage, or the abbreviation "TSTM" for thunderstorm. Making these entries more consistant will provide a better overall picture of the health and economic data as functions of the type of weather event.
 
-```{r echo=TRUE}
+```{r echo=TRUE, cache=TRUE}
 stormdata$EVTYPE <- toupper(stormdata$EVTYPE)
 stormdata$EVTYPE <- sub("TSTM", "THUNDERSTORM", stormdata$EVTYPE)
 stormdata$EVTYPE <- sub("S$", "", stormdata$EVTYPE)
@@ -87,7 +87,7 @@ stormdata$EVTYPE <- as.factor(stormdata$EVTYPE)
   
 The impact of storm events on population health can be described in terms of the numbers of fatalaties and injuries caused. Here, we will look at the sum of all fatalaties and the sum of all injuries for each weather event type, and rank the top 10:
 
-```{r echo=TRUE}
+```{r echo=TRUE, cache=TRUE}
 library(stats)
 library(plyr)
 sumFatalities <- aggregate(stormdata$FATALITIES, 
@@ -112,33 +112,35 @@ These tables show us that the weather events with the highest impact (as determi
  
 The economic consequences of weather events can be quantified by the estimated property and crop damage.   
 
-```{r echo=TRUE}
+We will first convert the property damage and crop damage data into comparable numerical forms according to the units of magnitude described in the [Storm Data Documentation](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf) under section 2.7 Damage. The `PROPDMGEXP` and `CROPDMGEXP` columns record a multiplier for each observation, including “K” for thousands, “M” for millions, and “B” for billions.
+
+```{r echo=TRUE, cache=TRUE}
 
 ```
 
  
 ## Results  
 
-The following panel plot contains a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
+The following panel contains the bar plots of the weather events with the highest health impact by total deaths and injuries:
 
-```{r echo=TRUE}
+```{r echo=TRUE, cache=TRUE}
 par(mfrow = c(1,2), mar = c(10, 4, 2, 1), cex = 0.8)
 barplot(topFatalities$Fatalities, names = topFatalities$EventType, las = 3,
                      ylab = "Total Fatalities", main = "10 Most Fatal Weather Events")
 barplot(topInjuries$Injuries, names = topInjuries$EventType,las = 3, 
                      ylab = "Total Injuries", main = "10 Most Injurious Weather Events")
+```
+
+The plot shows that the weather events with the most fatalaties are Excessive Heat, Tornados, and Flash Floods. Tornados also account for the most injuries caused by a weather event, with a total higher than the next top four event types combined. It is also apparent that Injuries make up a much greater portion of the health consequences than Fatalities due to weather events. 
+
+The following panel contains the plots of the weather events with the highest economic impact by total property and crop damage:
+
+```{r echo=TRUE, cache=TRUE}
+par(mfrow = c(1,2), mar = c(10, 4, 2, 1), cex = 0.8)
 
 ```
 
-The plot shows that the pattern of activity follows the same trend across weekdays and weekends, with a peak in the morning (as we saw previously around 8:35AM), but that weekends tend to have higher average step counts throughout the day than on weekdays. 
-The output of `summary()` for each day type also confirms this trend of higher weekend averages compared to weekdays, though the weekdays have a higher maximum.  
 
-```{r echo=TRUE}
-
-
-```
-
-The weekday data appears closer to the original estimates, which makes sense, as it makes up a greater portion of the total dataset.
-(Also of note: there are fewer weekend observations in the data set, and therefore fewer values to average across.)
 
 *End of analysis*
+
