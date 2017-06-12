@@ -5,7 +5,9 @@ output:
 ---
 # Reproducible Research Peer Assessment 2
 
-This repository contains the files for the Reproducible Research Peer Assessment 2 project. The assignment is outlined as follows:
+This repository contains the files for the Reproducible Research Peer Assessment 2 project. The project submission has also been published via RPubs at: [RPubs page](http://rpubs.com/jmcampbell2/ReproducibleResearchProj2)
+
+The assignment is outlined as follows:
 
 ## Introduction
 
