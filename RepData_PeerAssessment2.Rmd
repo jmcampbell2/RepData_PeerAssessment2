@@ -10,7 +10,7 @@ output:
 # Impact of Severe Weather Events on the United States
 
 ## Synopsis
-This analysis investigates the impact of severe weather events on the United States, specifically their effect on public health and their economic consequences. Raw data is provided by the U.S. National Oceanic and Atmospheric Administration's (NOAA). The findings below rank the top ten weather events by total deaths, injuries, and damages done to property and to crops. The results show that some storm events have siginificant impact in both domains, causing both high rates of death and injuries as well as property and crop damage, such as is seen with Tornadoes and Thunderstorm Wind.  While Floods and Flash Flooding appear across all the highest ranked storms for both fatalaties/injuries and damages, they show their consequences most strongly among the highest damaging storms to property, where Floods have a total over an order of magnitude higher than the damages done to crops. Other weather events are more influencial in one domain or another, for example Excessive Heat showing the highest fatality rates though not appearing at all in the top ten causes of economic damages, and Drought which is by far the greatest cause of crop damage while not appearing in any of the highest ranks of the other categories. 
+This analysis investigates the impact of severe weather events on the United States, specifically their effect on public health and their economic consequences. Raw data is provided by the U.S. National Oceanic and Atmospheric Administration's (NOAA). The findings below rank the top ten weather events by total deaths, injuries, and damages done to property and to crops. The results show that some storm events have significant impact in both domains, causing both high rates of death and injuries as well as property and crop damage, such as is seen with Tornadoes and Thunderstorm Wind.  While Floods and Flash Flooding appear across all the highest ranked storms for both fatalities/injuries and damages, they show their consequences most strongly among the highest damaging storms to property, where Floods have a total over an order of magnitude higher than the damages done to crops. Other weather events are more influential in one domain or another, for example Excessive Heat showing the highest fatality rates though not appearing at all in the top ten causes of economic damages, and Drought which is by far the greatest cause of crop damage while not appearing in any of the highest ranks of the other categories. 
 
 
 ## Data Processing
@@ -42,7 +42,7 @@ df$Year <- as.numeric(format(as.Date(df$BGN_DATE, format = "%m/%d/%Y %H:%M:%S"),
 hist(df$Year, main="Total Storm Events by Year", xlab="Year")
 ```
 
-We can see a marked increase in the number of recorded storm events after the year 1990. Therefore, to take advantage of the best records, we will focus our examination on the subset of strom data between 1990 and 2011.
+We can see a marked increase in the number of recorded storm events after the year 1990. Therefore, to take advantage of the best records, we will focus our examination on the subset of storm data between 1990 and 2011.
 
 In examining our questions, the variables which we will be using in this dataset are:
 
@@ -68,7 +68,7 @@ stormdata <- stormdata[variables]
 
 so that we are now working with 751,740 observations of 7 variables.
 
-The final step in preparing the data will be to clean up some of the text variables. As visible when using `summary()` on the EVTYPE factor variable, many of the names have been entered with character variations such as lowercase and plural usage, or the abbreviation "TSTM" for thunderstorm. Making these entries more consistant will provide a better overall picture of the health and economic data as functions of the type of weather event.
+The final step in preparing the data will be to clean up some of the text variables. As visible when using `summary()` on the EVTYPE factor variable, many of the names have been entered with character variations such as lowercase and plural usage, or the abbreviation "TSTM" for thunderstorm. Making these entries more consistent will provide a better overall picture of the health and economic data as functions of the type of weather event.
 
 ```{r echo=TRUE, cache=TRUE}
 stormdata$EVTYPE <- toupper(stormdata$EVTYPE)
@@ -85,7 +85,7 @@ stormdata$EVTYPE <- as.factor(stormdata$EVTYPE)
 
 ## Question: Across the United States, which types of events are most harmful with respect to population health?
   
-The impact of storm events on population health can be described in terms of the numbers of fatalaties and injuries caused. Here, we will look at the sum of all fatalaties and the sum of all injuries for each weather event type, and rank the top 10:
+The impact of storm events on population health can be described in terms of the numbers of fatalities and injuries caused. Here, we will look at the sum of all fatalities and the sum of all injuries for each weather event type, and rank the top 10:
 
 ```{r echo=TRUE, cache=TRUE}
 library(stats)
@@ -106,7 +106,7 @@ topFatalities
 topInjuries
 ```
  
-These tables show us that the weather events with the highest impact (as determined by the highest total numbers of deaths and injuries caused) include Excessive Heat, Tornados, Thunderstorm Winds, Flash Floods and Lightning, and that these two lists of events hold most of their members in common.  
+These tables show us that the weather events with the highest impact (as determined by the highest total numbers of deaths and injuries caused) include Excessive Heat, Tornadoes, Thunderstorm Winds, Flash Floods and Lightning, and that these two lists of events hold most of their members in common.  
 
  
 ## Question: Across the United States, which types of events have the greatest economic consequences?
@@ -137,7 +137,7 @@ stormdata$CROPDMGEXP[is.na(stormdata$CROPDMGEXP)] = 0  ##Assume non-alphanumeric
 
 ```
 
-Then we can write function to apply the exponents to the amounts of propery and crop damage:
+Then we can write function to apply the exponents to the amounts of property and crop damage:
 
 ```{r echo=TRUE, cache=TRUE}
 calcDamage <- function(value,exp){value * (10^exp)}
@@ -150,7 +150,7 @@ summary(stormdata$CropDamage)
 
 ```
 
-Finally, we can assess the economic impact of storm events in terms of the total amounts (in Dollars) of property and crop damage caused. Here, we will look at the sum of all propery damage and the sum of all crop damage for each weather event type, and rank the top 10:
+Finally, we can assess the economic impact of storm events in terms of the total amounts (in Dollars) of property and crop damage caused. Here, we will look at the sum of all property damage and the sum of all crop damage for each weather event type, and rank the top 10:
 
 ```{r echo=TRUE, cache=TRUE}
 sumPropDamage <- aggregate(stormdata$PropertyDamage, 
@@ -184,7 +184,7 @@ barplot(topInjuries$Injuries, names = topInjuries$EventType,las = 3,
         ylab = "Total Injuries", main = "10 Most Injurious Weather Events")
 ```
 
-The plot shows that the weather events with the most fatalaties are Excessive Heat, Tornados, and Flash Floods. Tornados also account for the most injuries caused by a weather event, with a total higher than the next top four event types combined. It is also apparent that Injuries make up a much greater portion of the health consequences than Fatalities due to weather events. 
+The plot shows that the weather events with the most fatalities are Excessive Heat, Tornadoes, and Flash Floods. Tornadoes also account for the most injuries caused by a weather event, with a total higher than the next top four event types combined. It is also apparent that Injuries make up a much greater portion of the health consequences than Fatalities due to weather events. 
 
 The following panel contains the plots of the weather events with the highest economic impact by total property and crop damage:
 
